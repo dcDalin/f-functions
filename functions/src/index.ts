@@ -1,9 +1,16 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 
-// Start writing Firebase Functions
-// https://firebase.google.com/docs/functions/typescript
+admin.initializeApp();
 
-export const helloWorld = functions.https.onRequest((request, response) => {
-  console.log('hello')
-  response.send("Hello world");
-});
+export const getBostonWeather = functions.https.onRequest((request, response) => {
+  admin.firestore().doc('cities-weather/boston-ma-us').get()
+  .then(snapshot => {
+    const data = snapshot.data()
+    response.send(data)
+  })
+  .catch(error => {
+    console.log(error);
+    response.status(500).send(error)
+  })
+})
